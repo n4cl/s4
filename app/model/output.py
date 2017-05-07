@@ -14,7 +14,7 @@ def wget_sss_group():
     from subprocess import Popen, PIPE
 
     # 非シェル経由でRSYNC実行
-    p = Popen(["bash", "fetch_report.sh"]
+    p = Popen(["bash", "./app/model/fetch_report.sh"]
               , stdin = PIPE
               , stdout = PIPE
               , stderr = PIPE)
@@ -23,7 +23,7 @@ def wget_sss_group():
     if p.wait() == 0:
         return True
     else:
-        print "SSSページダウンロード中にエラーが発生しました:\n" + str(p.stderr.readlines())
+        print "SSSページダウンロード中にエラーが発生しました:\n" + str(p.stderr.readlines()[0])
         return False
 
 def wget_sss_nippo(nippo_query):
@@ -194,7 +194,8 @@ class sss(object):
         self.actual_time = table_tag[3].find("input")["value"]
 
 def main():
-    print fetch_sss_data()
+    wget_sss_group()
+    # fetch_sss_data()
 
 def fetch_sss_data():
     # 日報のURLを含んだページをダウンロード
@@ -220,7 +221,7 @@ def fetch_sss_data():
         report.extract_repot()
     except:
         pass
-        continue
+#        continue
 
     reports.append(report)
 
