@@ -2,8 +2,28 @@
 
 from bs4 import BeautifulSoup
 
+def fetch_group_report():
 
-def wget_sss_group():
+    # グループ日報ページから日報のリンク(クエリ部)を取得
+    link = extract_nippo(fetch_nippo_link())
+
+    res = []
+
+    # 各日報からデータをスクレピング
+    for query in link:
+        html = fetch_report(query)
+        res.append(fetch_sss_data(html))
+
+    # TODO: 良いレスポンスを考える
+    if res:
+        d = {"respons": "ok", "report": res}
+    else:
+        d = {"respons": "ng"}
+
+    from json import dumps
+    return dumps(d)
+
+def fetch_nippo_link():
     """
     SSSのグループ表示ページのダウンロード
     Args:
@@ -21,12 +41,12 @@ def wget_sss_group():
 
     # 戻り値が0であれば正常終了
     if p.wait() == 0:
-        return True
+        return p.stdout.read()
     else:
         print "SSSページダウンロード中にエラーが発生しました:\n" + str(p.stderr.readlines()[0])
-        return False
+        return ""
 
-def wget_sss_nippo(nippo_query):
+def fetch_report(nippo_query):
     """
     日報ページのダウンロード
     Args:
@@ -37,7 +57,7 @@ def wget_sss_nippo(nippo_query):
     from subprocess import Popen, PIPE
 
     # 非シェル経由でRSYNC実行
-    p = Popen(["bash", "fetch_daily_report.sh", nippo_query]
+    p = Popen(["bash", "./app/model/fetch_daily_report.sh", nippo_query]
               , stdin = PIPE
               , stdout = PIPE
               , stderr = PIPE)
@@ -197,21 +217,8 @@ def main():
     wget_sss_group()
     # fetch_sss_data()
 
-def fetch_sss_data():
-    # 日報のURLを含んだページをダウンロード
-    #wget_sss_group()
-    """
-    file_path = "page_report"
-    html = read_file(file_path)
-    nippo_query = extract_nippo(html)
+def fetch_sss_data(html):
 
-    for query in nippo_query:
-        print wget_sss_nippo(query).decode("euc_jisx0213")
-        #print sss(wget_sss_nippo(query).decode("euc_jisx0213"))
-    """
-    reports = []
-    html = read_file("test")
-    #html = read_file("test_myself")
     report = sss(html)
 
     # TODO: レポートの種類を判定する処理が必要
@@ -223,24 +230,19 @@ def fetch_sss_data():
         pass
 #        continue
 
-    reports.append(report)
+    d = {u"data": report.date,
+         u"department": report.department,
+         u"user_name": report.user_name,
+         u"client": report.client,
+         u"other": report.other,
+         u"job": report.job,
+         u"work_class": report.work_class,
+         u"text": report.text,
+         u"actual_time": report.actual_time}
 
-    json_data = {u"report":[]}
-    for r in reports:
-        d = {u"data": report.date,
-             u"department": report.department,
-             u"user_name": report.user_name,
-             u"client": report.client,
-             u"other": report.other,
-             u"job": report.job,
-             u"work_class": report.work_class,
-             u"test": report.text,
-             u"actual_time": report.actual_time}
-
-        json_data[u"report"].append(d)
-
-    from json import dumps
-    return dumps(json_data)
+    return d 
+#    from json import dumps
+#    return dumps(json_data)
 
 
 if __name__ == '__main__':
