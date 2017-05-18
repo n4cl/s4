@@ -2,10 +2,28 @@
 
 from bs4 import BeautifulSoup
 
-def fetch_group_report():
+def fetch_group_report(input_date=None):
 
+    from json import dumps
+    from datetime import datetime, date, timedelta
+
+    # TODO:引数であるdateは、YYYYMMDDのときしか受け付けない状態
+    #      あとでバリエーション増やしてもいいかも
+    if input_date:
+        # unicode type to str type
+        input_date = str(input_date)
+        # TODO: 最低限の入力検証...
+        if len(input_date) != 8:
+            return dumps({"respons": "1", "text": "invalid string length"})
+        try:
+            date(int(input_date[:4]), int(input_date[4:6]), int(input_date[6:8]))
+        except:
+            return dumps({"respons": "1", "text": "invalid date format"})
+    else:
+        input_date = (datetime.now() + timedelta(days=-1)).strftime("%Y%m%d")
     # グループ日報ページから日報のリンク(クエリ部)を取得
-    link = extract_nippo(fetch_nippo_link())
+    _g = fetch_nippo_link(input_date)
+    link = extract_nippo(_g)
 
     res = []
 
@@ -15,15 +33,16 @@ def fetch_group_report():
         res.append(fetch_sss_data(html))
 
     # TODO: 良いレスポンスを考える
+    # respons: 0 -> 正常
+    #          1 -> 異常
     if res:
-        d = {"respons": "ok", "report": res}
+        d = {"respons": "0", "report": res}
     else:
-        d = {"respons": "ng"}
+        d = {"respons": "1"}
 
-    from json import dumps
     return dumps(d)
 
-def fetch_nippo_link():
+def fetch_nippo_link(_input_date):
     """
     SSSのグループ表示ページのダウンロード
     Args:
@@ -34,7 +53,7 @@ def fetch_nippo_link():
     from subprocess import Popen, PIPE
 
     # 非シェル経由でRSYNC実行
-    p = Popen(["bash", "./app/model/fetch_report.sh"]
+    p = Popen(["bash", "./app/model/fetch_report.sh", _input_date]
               , stdin = PIPE
               , stdout = PIPE
               , stderr = PIPE)
