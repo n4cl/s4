@@ -23,7 +23,7 @@ def fetch_group_report(input_date=None):
         input_date = (datetime.now() + timedelta(days=-1)).strftime("%Y%m%d")
     # グループ日報ページから日報のリンク(クエリ部)を取得
     _g = fetch_nippo_link(input_date)
-    link = extract_nippo(_g)
+    link = extract_nippo(_g, input_date)
 
     res = []
 
@@ -88,7 +88,7 @@ def fetch_report(nippo_query):
         print "日報ページダウンロード中にエラーが発生しました:\n" + str(p.stderr.readlines())
         return ""
 
-def extract_nippo(html):
+def extract_nippo(html, input_date):
     """ 日報データを取得するためのクエリ部を抽出する """
     nippo = []
     bs = BeautifulSoup(html, "lxml")
@@ -96,7 +96,11 @@ def extract_nippo(html):
     for link in bs.find_all("a"):
         if "nippodetailview" in link.get("href"):
             # クエリ部だけ抜き出す
-            nippo.append(link.get("href").split("?")[1])
+            _l = link.get("href").split("?")[1]
+
+            # 指定の日付のみ
+            if "seldate=" + input_date in _l:
+                nippo.append(_l)
 
     return nippo
 
