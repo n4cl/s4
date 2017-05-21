@@ -88,30 +88,6 @@ def fetch_report(nippo_query):
         print "日報ページダウンロード中にエラーが発生しました:\n" + str(p.stderr.readlines())
         return ""
 
-def read_file(file_path):
-    """ 
-    euc_jisx0213でエンコードされたファイルの読み込み
-    Args:
-        file_path: str: 読み込むファイルパス
-    Return:
-        読み込んだ文字列
-    """
-    from codecs import open
-    body = None
-    try:
-        file = open(file_path, "r", "euc_jisx0213")
-        #file = open(file_path, "r", "euc-jp")
-        # このネストで失敗することはあるのか 念のため例外処理を追記した
-        try:
-            body = file.read()
-        except IOError as e:
-            raise e
-        finally:
-            file.close()
-    except IOError as e:
-        raise e
-    return body
-
 def extract_nippo(html):
     """ 日報データを取得するためのクエリ部を抽出する """
     nippo = []
