@@ -9,18 +9,11 @@ app = Blueprint(__name__, "service")
 def group():
     """ グループでの取得 """
     if request.method == "POST":
-
-        if request.headers["Content-Type"] != "application/json":
-            return jsonify(res='error'), 500
-
-        # 日付データを受け取った場合、日付の日報を返す
-        req = request.json
-        if req:
-            if "date" in req:
-                return fetch_group_report(req["date"])
-
-        return "POST"
+        return "Not Implemented"
 
     elif request.method == "GET":
-        return fetch_group_report()
-
+        _date = request.args.get("date")
+        if _date:
+            return fetch_group_report(_date)
+        else:
+            return fetch_group_report()
