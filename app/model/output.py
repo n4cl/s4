@@ -40,7 +40,7 @@ def fetch_group_report(input_date=None):
     else:
         d = {"respons": "1"}
 
-    return dumps(d)
+    return dumps(d, encoding='utf-8', ensure_ascii=False)
 
 def fetch_nippo_link(_input_date):
     """
@@ -136,6 +136,10 @@ class sss(object):
         self.html = html
 
     def extract_repot(self):
+        """
+        BeautifulSoupで取り込む時点で自動で文字コードを認識する
+        BeautifulSoupの内部では、Unicode型になっている
+        """
         self.bs = BeautifulSoup(self.html, "lxml")
         __template = self.__get_template(self.bs)
         self.template = __template
@@ -147,7 +151,6 @@ class sss(object):
             #raise
             # TODO: エラーにする予定
             pass
-
 
     def __get_template(self, __bs):
         """ 
@@ -240,9 +243,6 @@ def fetch_sss_data(html):
          u"actual_time": report.actual_time}
 
     return d 
-#    from json import dumps
-#    return dumps(json_data)
-
 
 if __name__ == '__main__':
     main()
