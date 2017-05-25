@@ -30,7 +30,15 @@ def fetch_group_report(input_date=None):
     # 各日報からデータをスクレピング
     for query in link:
         html = fetch_report(query)
-        res.append(fetch_sss_data(html))
+        d = fetch_sss_data(html)
+        d[u"query"] = query
+
+        # ユニークidの取得
+        import re
+        p = r"nid\=(.*?)\&"
+        nid = re.search(p, query).group(1)
+        d[u"nid"] = nid
+        res.append(d)
 
     # TODO: 良いレスポンスを考える
     # respons: 0 -> 正常
