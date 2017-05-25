@@ -240,7 +240,7 @@ def fetch_sss_data(html):
         pass
 #        continue
 
-    d = {u"data": report.date,
+    d = {u"date": report.date,
          u"department": report.department,
          u"user_name": report.user_name,
          u"client": report.client,
