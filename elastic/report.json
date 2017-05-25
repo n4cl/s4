@@ -1,0 +1,49 @@
+{
+  "settings": {
+    "index": {
+      "analysis": {
+        "tokenizer": {
+          "ja_text_tokenizer": {
+            "type": "kuromoji_tokenizer",
+            "mode": "search"
+          }
+        },
+        "analyzer": {
+          "ja_text_analyzer": {
+            "tokenizer": "ja_text_tokenizer",
+            "type": "custom",
+            "char_filter": [
+              "icu_normalizer"
+            ],
+            "filter": [
+              "kuromoji_part_of_speech"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "mappings": {
+    "report": {
+      "_source": {
+        "enabled": true
+      },
+      "_all": {
+        "enabled": true,
+        "analyzer": "kuromoji"
+      },
+      "properties": {
+        "date": {"type": "date", "format": "yyyy-MM-dd"},
+        "client" : {"type": "string", "store": "yes", "index": "analyzed", "boost": 20},
+        "job" : {"type": "string", "store": "yes", "index": "analyzed", "boost": 15},
+        "other" : {"type": "string", "store": "yes", "index": "analyzed", "boost": 10},
+        "department" : {"type": "string", "store": "yes", "index": "not_analyzed"},
+        "user_name":  {"type": "string", "store": "yes", "index": "not_analyzed"},
+        "text":   {"type": "string", "store": "yes", "index": "analyzed", "term_vector": "with_positions_offsets"},
+        "work_class": {"type": "string", "store": "yes", "index": "not_analyzed"},
+        "query": {"type": "string", "store": "yes", "index": "no"},
+        "actual_time": {"type": "string", "store": "yes", "index": "no"}
+      }
+    }
+  }
+}
