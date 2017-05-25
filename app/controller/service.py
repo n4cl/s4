@@ -12,7 +12,7 @@ def group():
         return "Not Implemented"
 
     elif request.method == "GET":
-        _date = request.args.get("date")
+        _date = request.args.get("date", default=None)
         if _date:
             return fetch_group_report(_date)
         else:
