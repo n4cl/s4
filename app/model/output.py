@@ -24,7 +24,6 @@ def fetch_group_report(input_date=None):
     # グループ日報ページから日報のリンク(クエリ部)を取得
     _g = fetch_nippo_link(input_date)
     link = extract_nippo(_g, input_date)
-
     res = []
 
     # 各日報からデータをスクレピング
@@ -102,7 +101,7 @@ def extract_nippo(html, input_date):
     bs = BeautifulSoup(html, "lxml")
 
     for link in bs.find_all("a"):
-        if "nippodetailview" in link.get("href"):
+        if "nippodetailview" in link.get("href") or "nippomod" in link.get("href"):
             # クエリ部だけ抜き出す
             _l = link.get("href").split("?")[1]
 
@@ -155,6 +154,8 @@ class sss(object):
         # TODO: 日報にHTMLタグ埋め込まれるとずれる
         if __template == self.division[u"tech"]:
             self.__get_not_login_report()
+        elif __template == "myself":
+            self.__get_login_report()
         elif not __template:
             #raise
             # TODO: エラーにする予定
@@ -174,8 +175,9 @@ class sss(object):
             __l = len(__table_tag[0].find_all("input"))
     
             if __l > 0:
-                # 自分の日報の可能性高し
-                return 
+                # 自分の日報
+                # TODO: 本当はスクレイピング用のアカウント使えるのが良いが
+                return "myself" 
     
             if __table_tag[3].find_all("font")[1].string == self.division["tech"]:
                 return __table_tag[3].find_all("font")[1].string
@@ -223,9 +225,64 @@ class sss(object):
         # 実働時間
         self.actual_time = table_tag[3].find("input")["value"]
 
+
+    def __get_login_report(self):
+        """
+        ログインユーザーの日報HTMLから日報データを抽出する
+        TODO: システム技術部の日報前提のメソッド
+        """
+        # 所属課 TODO: なぜか自分の日報にはないので。。。
+        self.department = u"システム技術2課"
+
+        # 報告者名
+        __tb = self.bs.find_all("table")[10]
+        self.user_name = __tb.find_all("span", attrs={"class": "font_top_login_name"})[0].string[3:]
+
+        __bs_f = self.bs.find_all("form")[1]
+
+        # 日付
+        __date = __bs_f.find_all("input", attrs={"name": "seldate"})[0]["value"]
+        self.date = __date[:4] + "-" + __date[4:6] + "-" + __date[6:8]
+
+        # 顧客
+        __cdealer = __bs_f.find_all("select", attrs={"name": "cdealer"})
+        __cdealer = __cdealer[0].find_all("option", attrs={"selected": True})
+        if __cdealer:
+            self.client = __cdealer[0].string.strip()
+        else:
+            self.client = None
+
+        # その他 (顧客)
+        __cenduser = __bs_f.find_all("select", attrs={"name": "cenduser"})
+        __cenduser = __cenduser[0].find_all("option", attrs={"selected": True})
+
+        if __cenduser:
+            self.other = __cenduser[0].string.strip()
+        else:
+            self.other = None
+
+        # 商品名
+        # TODO: タグ構造が微妙なので、あとで考える...
+        #self.job = __t[13].string
+
+        # TODO: なんで作ったんだっけ？
+        ## テンプレート名
+        #self.template = __t[1].string
+
+        # 区分
+        __fp4 = __bs_f.find_all("select", attrs={"name": "fp4"})
+        self.work_class = __fp4[0].find_all("option", attrs={"selected": True})[0].string.strip()
+
+        # 報告内容
+        self.text = __bs_f.textarea.string
+
+        # 実働時間
+        #self.actual_time = table_tag[3].find("input")["value"]
+        __fp11 = __bs_f.find_all("input", attrs={"name": "fp11"})
+        self.actual_time = __fp11[0]["value"]
+
 def main():
-    wget_sss_group()
-    # fetch_sss_data()
+    print ""
 
 def fetch_sss_data(html):
 
@@ -238,7 +295,6 @@ def fetch_sss_data(html):
         report.extract_repot()
     except:
         pass
-#        continue
 
     d = {u"date": report.date,
          u"department": report.department,
