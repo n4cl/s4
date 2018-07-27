@@ -1,0 +1,15 @@
+{
+  "manifest_version": 2,
+  "name": "Enhanced search for SSS",
+  "version": "1.0",
+    "content_scripts": [
+    {
+      "matches": ["*://*/cgi-bin/sss/s3search.cgi?*"],
+      "js" : [
+          "jquery-3.1.1.min.js",
+          "config.js",
+          "main.js"
+      ]
+    }
+  ]
+}
