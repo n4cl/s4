@@ -3,13 +3,17 @@
 import sys
 import requests
 from json import dumps
+from ConfigParser import SafeConfigParser
+
+config = SafeConfigParser()
+config.read("config.ini")
 
 
 class S3Client(object):
 
     def __init__(self):
         # REST API のエンドポイント
-        self._endpoint = "http://10.20.30.150:5000/sss/report"
+        self._endpoint = "http://" + config.get("server", "ap_server") + "/sss/report"
 
     def search(self, keyword):
         # リクエストのクエリパラメータ
@@ -27,7 +31,7 @@ class ESClient(object):
 
     def __init__(self):
         # REST API のエンドポイント
-        self._endpoint = "http://10.20.30.149:9200/es/report"
+        self._endpoint = "http://" + config.get("server", "es_server") + "/es/report"
 
     def add_document(self, json):
         uri = self._endpoint + "/" + json["nid"]
