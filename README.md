@@ -1,7 +1,10 @@
 S4
 ====
 
-desknet's SSSの検索拡張システム
+desknet's SSSの検索拡張システムで下記の3点から構成されている
+- クローラーサーバー
+- 検索エンジン(Elasticsearch)
+- 検索拡張(Chrome拡張)
 
 ## 要件
 - Python 2.7
@@ -17,26 +20,40 @@ pip install -r requirements.txt
 ```
 
 ### Elasticsearch plugins
-- analysis-icu
-- analysis-kuromoji
+```
+index作成時に必要なモジュールをインストール
+bin/elasticsearch-plugin install analysis-icu
+bin/elasticsearch-plugin install analysis-kuromoji
+```
 
 ### desknet's SSS クローラー設定
-configファイルの次の[login_name]と[login_password]に利用するSSSのIDとパスワードを入力する
+ルートディレクトのconfigファイルの次の[login_name]と[login_password]に利用するSSSのIDとパスワードを入力する
 ```
 sss_user=[login_name]
 sss_passwd=[login_password]
 ```
 
 ## 起動方法
-### flask APサーバーの起動方法
+### クローラーサーバーの起動方法
 ```
+# サーバー起動
 python main.py
 ```
-起動後、以下のアドレスに対してGETリクエストを行うと、前日分の日報データをjson形式で返す
 ```
-http://[server ip address]/sss
+# 下記アドレスに対してGETリクエストを行うと、前日分の日報データをjson形式で返す
+http://[server ip address]/sss/report
+
+# パラメータに日付を付与すろと、指定日の日報データをjsonで返す
+http://[server ip address]/sss/report?date=20180701
 ```
 
-## 検索方法
+## Elasticsearchへの登録方法
+register_app内のregister.pyから登録することが可能
+```
+# 2018年7月28日の日報をElasticsearchへ登録する
+python register.py 20180728
+```
+
+## SSSでの検索方法
 - chromeExtenstionフォルダ内の検索拡張ツールをGoogleChromeに追加する
 - SSSの検索画面に拡張検索ボタンが追加される
