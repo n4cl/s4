@@ -119,6 +119,7 @@ def extract_nippo(html, input_date):
 class SSS(object):
     """
     ElasticSearchに登録する日報データオブジェクト
+    TODO: このクラスを親クラスにして、テンプレートごとに子クラスを実装するのが良いとみた
 
     date: 報告日付
     department: 所属課
@@ -141,7 +142,7 @@ class SSS(object):
     text = None
     actual_time = None
 
-    # TODO: これどうにかしたい。
+    # TODO: これどうにかしたい。 この辺は子クラスで実装しろ
     division = {u"tech": u"☆☆☆　システム技術部　日報　☆☆☆"}
 
     def __init__(self, html):
@@ -195,6 +196,7 @@ class SSS(object):
     def __get_not_login_report(self):
         """
         ログインユーザー外の日報HTMLから日報データを抽出する
+        TODO: 抽象メソッドにする予定
         """
         self.bs = self.bs.find_all("form")[1]
         table_tag = self.bs.find_all("table")
@@ -233,6 +235,7 @@ class SSS(object):
         """
         ログインユーザーの日報HTMLから日報データを抽出する
         TODO: システム技術部の日報前提のメソッド
+              抽象メソッドにする予定
         """
         # 所属課 TODO: なぜか自分の日報にはないので。。。
         self.department = u"システム技術2課"
