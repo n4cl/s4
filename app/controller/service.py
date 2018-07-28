@@ -1,9 +1,10 @@
 # coding: utf-8
 
-from flask import Blueprint, request, jsonify
-from app.model.output import fetch_report, fetch_group_report
+from flask import Blueprint, request
+from app.model.output import fetch_group_report
 
 app = Blueprint(__name__, "service")
+
 
 @app.route('/report', methods=["GET", "POST"])
 def group():
