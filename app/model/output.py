@@ -2,6 +2,7 @@
 
 from bs4 import BeautifulSoup
 
+
 def fetch_group_report(input_date=None):
 
     from json import dumps
@@ -49,6 +50,7 @@ def fetch_group_report(input_date=None):
 
     return dumps(d, encoding='utf-8', ensure_ascii=False)
 
+
 def fetch_nippo_link(_input_date):
     """
     SSSのグループ表示ページのダウンロード
@@ -61,9 +63,9 @@ def fetch_nippo_link(_input_date):
 
     # 非シェル経由でRSYNC実行
     p = Popen(["bash", "./app/model/fetch_report.sh", _input_date]
-              , stdin = PIPE
-              , stdout = PIPE
-              , stderr = PIPE)
+              , stdin=PIPE
+              , stdout=PIPE
+              , stderr=PIPE)
 
     # 戻り値が0であれば正常終了
     if p.wait() == 0:
@@ -71,6 +73,7 @@ def fetch_nippo_link(_input_date):
     else:
         print "SSSページダウンロード中にエラーが発生しました:\n" + str(p.stderr.readlines()[0])
         return ""
+
 
 def fetch_report(nippo_query):
     """
@@ -84,9 +87,9 @@ def fetch_report(nippo_query):
 
     # 非シェル経由でRSYNC実行
     p = Popen(["bash", "./app/model/fetch_daily_report.sh", nippo_query]
-              , stdin = PIPE
-              , stdout = PIPE
-              , stderr = PIPE)
+              , stdin=PIPE
+              , stdout=PIPE
+              , stderr=PIPE)
 
     # 戻り値が0であれば正常終了
     if p.wait() == 0:
@@ -94,6 +97,7 @@ def fetch_report(nippo_query):
     else:
         print "日報ページダウンロード中にエラーが発生しました:\n" + str(p.stderr.readlines())
         return ""
+
 
 def extract_nippo(html, input_date):
     """ 日報データを取得するためのクエリ部を抽出する """
@@ -111,7 +115,8 @@ def extract_nippo(html, input_date):
 
     return nippo
 
-class sss(object):
+
+class SSS(object):
     """
     ElasticSearchに登録する日報データオブジェクト
 
@@ -157,7 +162,7 @@ class sss(object):
         elif __template == "myself":
             self.__get_login_report()
         elif not __template:
-            #raise
+            # raise
             # TODO: エラーにする予定
             pass
 
@@ -187,7 +192,6 @@ class sss(object):
         # 面倒なので、とりあえずNoneを返す
         return None
 
-       
     def __get_not_login_report(self):
         """
         ログインユーザー外の日報HTMLから日報データを抽出する
@@ -224,7 +228,6 @@ class sss(object):
 
         # 実働時間
         self.actual_time = table_tag[3].find("input")["value"]
-
 
     def __get_login_report(self):
         """
@@ -263,11 +266,11 @@ class sss(object):
 
         # 商品名
         # TODO: タグ構造が微妙なので、あとで考える...
-        #self.job = __t[13].string
+        # self.job = __t[13].string
 
         # TODO: なんで作ったんだっけ？
-        ## テンプレート名
-        #self.template = __t[1].string
+        # テンプレート名
+        # self.template = __t[1].string
 
         # 区分
         __fp4 = __bs_f.find_all("select", attrs={"name": "fp4"})
@@ -277,16 +280,18 @@ class sss(object):
         self.text = __bs_f.textarea.string
 
         # 実働時間
-        #self.actual_time = table_tag[3].find("input")["value"]
+        # self.actual_time = table_tag[3].find("input")["value"]
         __fp11 = __bs_f.find_all("input", attrs={"name": "fp11"})
         self.actual_time = __fp11[0]["value"]
+
 
 def main():
     print ""
 
+
 def fetch_sss_data(html):
 
-    report = sss(html)
+    report = SSS(html)
 
     # TODO: レポートの種類を判定する処理が必要
     # TODO: 自分のときは、別のスクレイピング手段を用意する必要がある
@@ -310,4 +315,3 @@ def fetch_sss_data(html):
 
 if __name__ == '__main__':
     main()
-
