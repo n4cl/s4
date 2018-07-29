@@ -2,22 +2,25 @@
   "settings": {
     "index": {
       "analysis": {
-        "tokenizer": {
-          "ja_text_tokenizer": {
-            "type": "kuromoji_tokenizer",
-            "mode": "search"
-          }
-        },
         "analyzer": {
           "ja_text_analyzer": {
-            "tokenizer": "ja_text_tokenizer",
-            "type": "custom",
+            "filter": [
+              "kuromoji_baseform",
+              "kuromoji_part_of_speech",
+              "ja_stop",
+              "kuromoji_stemmer"
+            ],
             "char_filter": [
               "icu_normalizer"
             ],
-            "filter": [
-              "kuromoji_part_of_speech"
-            ]
+            "type": "custom",
+            "tokenizer": "ja_text_tokenizer"
+          }
+          },
+        "tokenizer": {
+          "ja_text_tokenizer": {
+            "mode": "search",
+            "type": "kuromoji_tokenizer"
           }
         }
       }
@@ -25,24 +28,18 @@
   },
   "mappings": {
     "report": {
-      "_source": {
-        "enabled": true
-      },
-      "_all": {
-        "enabled": true,
-        "analyzer": "kuromoji"
-      },
+      "dynamic": "strict",
       "properties": {
+        "actual_time": {"type": "float", "store": true},
+        "client": {"type": "keyword", "boost": 20, "store": true},
         "date": {"type": "date", "format": "yyyy-MM-dd"},
-        "client" : {"type": "string", "store": "yes", "index": "analyzed", "boost": 20},
-        "job" : {"type": "string", "store": "yes", "index": "analyzed", "boost": 15},
-        "other" : {"type": "string", "store": "yes", "index": "analyzed", "boost": 10},
-        "department" : {"type": "string", "store": "yes", "index": "not_analyzed"},
-        "user_name":  {"type": "string", "store": "yes", "index": "not_analyzed"},
-        "text":   {"type": "string", "store": "yes", "index": "analyzed", "term_vector": "with_positions_offsets"},
-        "work_class": {"type": "string", "store": "yes", "index": "not_analyzed"},
-        "query": {"type": "string", "store": "yes", "index": "no"},
-        "actual_time": {"type": "string", "store": "yes", "index": "no"}
+        "department": {"type": "keyword", "store": true},
+        "job": {"type": "keyword", "boost": 15, "store": true},
+        "other": {"type": "keyword", "store": true},
+        "query": {"type": "keyword", "index": false, "store": true},
+        "text": {"type": "text", "store": true, "index": "analyzed", "analyzer": "ja_text_analyzer"},
+        "user_name": {"type": "keyword", "store": true},
+        "work_class": {"type": "keyword", "store": true}
       }
     }
   }
