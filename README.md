@@ -32,11 +32,17 @@ bin/elasticsearch-plugin install analysis-kuromoji
 curl -X PUT -d @elastic/report.json http:/[Elasticsearch IP or Name]/es
 ```
 
-### desknet's SSS クローラー設定
+### クローラーサーバーの設定
 ルートディレクトのconfigファイルの次の[login_name]と[login_password]に利用するSSSのIDとパスワードを入力する
 ```
 sss_user=[login_name]
 sss_passwd=[login_password]
+```
+
+### Chrome Extesionの設定
+chromeExtension/config.jsの[ElasticsearchServerName]にElasticserachのIPを入力する
+```
+sssConfig.esServerName = '//' + [ElasticsearchServerName] + '/';
 ```
 
 ## 起動方法
@@ -70,4 +76,5 @@ python register.py 20180728
 ## SSSでの検索方法
 - chromeExtenstionフォルダ内の検索拡張ツールをGoogleChromeに追加する
 - SSSの検索画面に拡張検索ボタンが追加される
+- 報告内容を入力し、拡張検索をクリックする
 ![検索画面](https://user-images.githubusercontent.com/5583062/43363183-d9e949dc-9339-11e8-88e0-c5a975d3d7f8.png)
