@@ -1,10 +1,22 @@
 S4
 ====
 
-desknet's SSSの検索拡張システムで下記の3点から構成されている
+desknet's SSSの検索拡張システムです
+
+## 概要
+下記の3点から構成されている
 - クローラーサーバー
 - 検索エンジン(Elasticsearch)
 - 検索拡張(Chrome拡張)
+
+### クローラーサーバー
+desknet's SSSのデータをクローリングする目的で利用する
+
+### 検索エンジン(Elasticsearch)
+desknet's SSS上の検索拡張機能からの問い合わせに対応する
+
+### 拡張検索(Chrome拡張)
+desknet's SSS上の検索画面に拡張検索機能を実装する
 
 ## 要件
 - Python 2.7
