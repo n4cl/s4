@@ -20,6 +20,7 @@ desknet's SSS上の検索画面に拡張検索機能を実装する
 
 ## 要件
 - Python 2.7
+- wget 1.14
 - Elasticsearch 5.4
 - desknet's SSS V3.0J R1
 
