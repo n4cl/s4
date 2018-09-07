@@ -34,15 +34,16 @@ pip install -r requirements.txt
 
 ### Elasticsearch plugins
 ```
-index作成時に必要なモジュールをインストール
+# index作成時に必要なモジュールをインストール
 bin/elasticsearch-plugin install analysis-icu
 bin/elasticsearch-plugin install analysis-kuromoji
+# インストール後にElasticsearchの再起動が必要
 ```
 
 ### Elasticsearchへindexの作成
 ```
 # indexの生成
-curl -X PUT -d @elastic/report.json http:/[Elasticsearch IP or Name]/es
+curl -X PUT -d @elastic/report.json http://[Elasticsearch IP or Name]/es
 ```
 
 ### クローラーサーバーの設定
