@@ -14,11 +14,13 @@ class ElasticSearchClient(object):
         self.url = "http://" + config.get("elasticsearch", "ip")
 
     def search_nippo(self, json):
+        """ 日報の検索 """
         search_api = self.url + "/es/_search"
         json = dumps(json, encoding='utf-8')
         return self._post_data(search_api, json)
 
     def analyze_text(self, text):
+        """ 文字列に形態素解析を実行する """
         analyze_api = self.url + "/es/_analyze?analyzer=ja_text_analyzer"
         return self._post_data(analyze_api, text)
 
@@ -27,7 +29,10 @@ class ElasticSearchClient(object):
         return res.json()
 
 def main():
-    """ 動作テスト """
+    """
+    動作テスト
+    TODO: テスト書きたい、テストを分離したい
+    """
     esc = ElasticSearchClient()
 
     keyword = "CMS"
