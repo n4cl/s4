@@ -66,12 +66,12 @@ def fetch_nippo_link(_input_date):
               , stdin=PIPE
               , stdout=PIPE
               , stderr=PIPE)
-
+    std_out, std_err = p.communicate()
     # 戻り値が0であれば正常終了
-    if p.wait() == 0:
-        return p.stdout.read()
+    if not std_err:
+        return std_out
     else:
-        print "SSSページダウンロード中にエラーが発生しました:\n" + str(p.stderr.readlines()[0])
+        print "SSSページダウンロード中にエラーが発生しました:\n" + str(std_err)
         return ""
 
 
@@ -91,11 +91,13 @@ def fetch_report(nippo_query):
               , stdout=PIPE
               , stderr=PIPE)
 
+    std_out, std_err = p.communicate()
+
     # 戻り値が0であれば正常終了
-    if p.wait() == 0:
-        return p.stdout.read()
+    if not std_err:
+        return std_out
     else:
-        print "日報ページダウンロード中にエラーが発生しました:\n" + str(p.stderr.readlines())
+        print "日報ページダウンロード中にエラーが発生しました:\n" + str(std_err)
         return ""
 
 
